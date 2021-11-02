@@ -232,6 +232,7 @@ prlist() {
 
     # Get and parse information for each PR
     for pull_request in $list_of_prs; do
+    (
         local pull_info="$(aws_cli codecommit get-pull-request \
         --pull-request-id "$pull_request" \
         --query "$pr_query" \
@@ -246,7 +247,9 @@ prlist() {
         src_branch="$(echo "${src_branch/refs\/heads\/}")"
 
         printf "$format" "$pull_id" "$title" "$is_merge" "$dst_branch" "$src_branch" "$author"
+    ) &
     done
+    wait
 }
 
 case "$command" in
